@@ -1,7 +1,6 @@
 package com.replace.replace.api.event;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.replace.replace.configuration.event.Event;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,80 +14,23 @@ import java.util.Map;
 @Service
 public class EventDispatcherImpl implements EventDispatcher {
 
-    protected final Map< String, List< EventSubscriber > > subscribers;
-    protected final EventRepository                        eventRepository;
-    protected       Logger                                 logger = LoggerFactory.getLogger( this.getClass() );
+    protected final List< EventSubscriber > eventSubscribers;
 
 
-    public EventDispatcherImpl( final EventRepository eventRepository ) {
-        this.subscribers     = new HashMap<>();
-        this.eventRepository = eventRepository;
+    public EventDispatcherImpl( List< EventSubscriber > eventSubscribers ) {
+        this.eventSubscribers = this.sortSubscribers( eventSubscribers );
     }
 
 
     @Override
-    public EventDispatcher follow( final String event, final EventSubscriber eventSubscriber ) {
-
-        this.logger.info( eventSubscriber.getClass().getName() + " as subscribed to event \"" + event + "\"" );
-
-        if ( !this.isInitializedEvent( event ) ) {
-            this.initializeEventSubscribers( event );
-        }
-
-        if ( !this.subscribers.get( event ).contains( eventSubscriber ) ) {
-            this.subscribers.get( event ).add( eventSubscriber );
-        }
-
-        return this;
-    }
-
-
-    @Override
-    public EventDispatcher newEvent( final String event, final Map< String, Object > params ) {
-
-        this.eventRepository.isValidCredentials( event, params );
-
-
-        final List< EventSubscriber > subscribers = new ArrayList<>();
-
-        if ( this.eventRepository.hasDefaultSubscribers( event ) ) {
-            for ( final EventSubscriber eventSubscriber : this.eventRepository.getDefaultSubscribers( event ) ) {
-                subscribers.add( eventSubscriber );
+    public EventDispatcher trigger( final Event event, final Map< String, Object > params ) {
+        for ( final EventSubscriber eventSubscriber : eventSubscribers ) {
+            if ( eventSubscriber.getEvents().contains( event ) ) {
+                eventSubscriber.receiveEvent( event, params );
             }
         }
 
-        if ( this.isInitializedEvent( event ) ) {
-            for ( final EventSubscriber eventSubscriber : this.subscribers.get( event ) ) {
-                if ( subscribers.contains( eventSubscriber ) ) {
-                    continue;
-                }
-
-                subscribers.add( eventSubscriber );
-            }
-        }
-        
-        for ( final EventSubscriber eventSubscriber : this.sortSubscribers( subscribers ) ) {
-            eventSubscriber.receiveEvent( event, params );
-        }
-
         return this;
-    }
-
-
-    /**
-     * Control that event is already initialized in subscribers repository
-     */
-    protected boolean isInitializedEvent( final String event ) {
-        return this.subscribers.containsKey( event );
-    }
-
-
-    /**
-     * Initialize event in subscribers repository
-     */
-    protected void initializeEventSubscribers( final String event ) {
-
-        this.subscribers.put( event, new ArrayList<>() );
     }
 
 

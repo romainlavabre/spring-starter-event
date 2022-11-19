@@ -1,5 +1,9 @@
 package com.replace.replace.api.event;
 
+
+import com.replace.replace.configuration.event.Event;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -9,12 +13,18 @@ import java.util.Map;
 public interface EventSubscriber {
 
     /**
+     * @return List of events to which you are subscribed
+     */
+    List< Event > getEvents();
+
+
+    /**
      * Will receive event target where is launched
      *
      * @param event
      * @param params
      */
-    void receiveEvent( String event, Map< String, Object > params )
+    void receiveEvent( Event event, Map< String, Object > params )
             throws RuntimeException;
 
 

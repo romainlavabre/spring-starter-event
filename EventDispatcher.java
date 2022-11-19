@@ -1,5 +1,8 @@
 package com.replace.replace.api.event;
 
+
+import com.replace.replace.configuration.event.Event;
+
 import java.util.Map;
 
 /**
@@ -9,21 +12,11 @@ import java.util.Map;
 public interface EventDispatcher {
 
     /**
-     * Subscribe to event
-     *
-     * @param event
-     * @param eventSubscriber
-     * @return
-     */
-    EventDispatcher follow( String event, EventSubscriber eventSubscriber );
-
-
-    /**
      * Launch new event
      *
      * @param event
      * @param params
      * @return
      */
-    EventDispatcher newEvent( String event, Map< String, Object > params );
+    EventDispatcher trigger( Event event, Map< String, Object > params );
 }
