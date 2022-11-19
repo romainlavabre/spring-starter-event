@@ -41,24 +41,14 @@ if [ -f "$DIRECTORY/Event.java" ]; then
 
     if [ "$OVERWRITE" == "Y" ] || [ "$OVERWRITE" == "y" ]; then
         mv "$1/config/Event.java" "$DIRECTORY/Event.java"
+    else
+        rm "$1/config/Event.java"
     fi
 
 else
     mv "$1/config/Event.java" "$DIRECTORY/Event.java"
 fi
 
-if [ -f "$DIRECTORY/EventConfig.java" ]; then
-    read -p "File $DIRECTORY/EventConfig.java, Overwrite ? [Y/n] " -r OVERWRITE
-
-    if [ "$OVERWRITE" == "Y" ] || [ "$OVERWRITE" == "y" ]; then
-        mv "$1/config/EventConfig.java" "$DIRECTORY/EventConfig.java"
-    fi
-
-else
-    mv "$1/config/EventConfig.java" "$DIRECTORY/EventConfig.java"
-fi
-
 sed -i "s|com.$PACKAGES.api.event.config;|com.${PACKAGES}.configuration.event;|" "$DIRECTORY/Event.java"
-sed -i "s|com.$PACKAGES.api.event.config;|com.${PACKAGES}.configuration.event;|" "$DIRECTORY/EventConfig.java"
 
 rm -Rf "$1/config"
