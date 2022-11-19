@@ -22,16 +22,8 @@ done
 CLASSES=(
     "$1/EventDispatcher.java"
     "$1/EventDispatcherImpl.java"
-    "$1/EventRepository.java"
-    "$1/EventRegisterImpl.java"
     "$1/EventSubscriber.java"
-    "$1/exception/EventSubscriberException.java"
-    "$1/exception/InvalidEventCredentialsException.java"
-    "$1/exception/NotRegisteredEventException.java"
-    "$1/annotation/Subscribers.java"
-    "$1/annotation/UnitEvent.java"
     "$1/config/Event.java"
-    "$1/config/EventConfig.java"
 )
 
 for CLASS in "${CLASSES[@]}"; do
