@@ -2,6 +2,7 @@ package com.replace.replace.api.event;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +16,10 @@ public class SubscriberCollector {
 
 
     public SubscriberCollector( List< EventSubscriber > eventSubscribers ) {
+        if ( eventSubscribers == null ) {
+            eventSubscribers = new ArrayList<>();
+        }
+        
         this.eventSubscribers = eventSubscribers;
         INSTANCE              = this;
     }
