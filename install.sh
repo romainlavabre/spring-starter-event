@@ -23,6 +23,7 @@ CLASSES=(
     "$1/EventDispatcher.java"
     "$1/EventDispatcherImpl.java"
     "$1/EventSubscriber.java"
+    "$1/SubscriberCollector.java"
     "$1/config/Event.java"
 )
 

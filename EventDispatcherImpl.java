@@ -1,7 +1,6 @@
 package com.replace.replace.api.event;
 
 import com.replace.replace.configuration.event.Event;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ public class EventDispatcherImpl implements EventDispatcher {
 
     protected boolean isSorted = false;
 
-    @Autowired
     protected List< EventSubscriber > eventSubscribers;
 
 
@@ -25,7 +23,7 @@ public class EventDispatcherImpl implements EventDispatcher {
     public EventDispatcher trigger( final Event event, final Map< String, Object > params ) {
         if ( !isSorted ) {
             synchronized (this) {
-                eventSubscribers = sortSubscribers( eventSubscribers );
+                eventSubscribers = sortSubscribers( SubscriberCollector.INSTANCE.eventSubscribers );
             }
         }
 
