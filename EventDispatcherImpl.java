@@ -3,10 +3,7 @@ package com.replace.replace.api.event;
 import com.replace.replace.configuration.event.Event;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -22,7 +19,7 @@ public class EventDispatcherImpl implements EventDispatcher {
     @Override
     public EventDispatcher trigger( final Event event, final Map< String, Object > params ) {
         if ( !isSorted ) {
-            synchronized (this) {
+            synchronized ( this ) {
                 eventSubscribers = sortSubscribers( SubscriberCollector.INSTANCE.eventSubscribers );
             }
         }
@@ -40,7 +37,7 @@ public class EventDispatcherImpl implements EventDispatcher {
     protected List< EventSubscriber > sortSubscribers( final List< EventSubscriber > eventSubscribers ) {
         final List< EventSubscriber > result = new ArrayList<>();
 
-        final Map< Integer, List< EventSubscriber > > temporarySort = new HashMap<>();
+        Map< Integer, List< EventSubscriber > > temporarySort = new HashMap<>();
 
         int maxPriority = 0;
 
@@ -59,6 +56,32 @@ public class EventDispatcherImpl implements EventDispatcher {
 
             temporarySort.put( eventSubscriber.getPriority(), listByPriority );
         }
+
+        final Map< Integer, List< EventSubscriber > > temporarySubSort = new HashMap<>();
+
+        for ( Map.Entry< Integer, List< EventSubscriber > > entry : temporarySort.entrySet() ) {
+            List< String > classNames = new ArrayList<>();
+
+            for ( EventSubscriber eventSubscriber : entry.getValue() ) {
+                classNames.add( eventSubscriber.getClass().getName() );
+            }
+
+            Collections.sort( classNames );
+
+            List< EventSubscriber > eventSubscribers1 = new ArrayList<>();
+
+            for ( String className : classNames ) {
+                for ( EventSubscriber eventSubscriber : entry.getValue() ) {
+                    if ( className.equals( eventSubscriber.getClass().getName() ) ) {
+                        eventSubscribers1.add( eventSubscriber );
+                    }
+                }
+            }
+
+            temporarySubSort.put( entry.getKey(), eventSubscribers1 );
+        }
+
+        temporarySort = temporarySubSort;
 
         for ( int i = 1; i <= maxPriority; i++ ) {
             if ( temporarySort.containsKey( i ) ) {
